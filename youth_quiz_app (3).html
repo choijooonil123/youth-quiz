@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>청소년지도사 퀴즈</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    #question, #answer, #notice {
+      font-size: 1.5em;
+      margin: 1em 0;
+    }
+    button {
+      font-size: 1em;
+      padding: 1em;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>청소년지도사 퀴즈</h1>
+  <div id="question">아래 시작 버튼을 눌러 퀴즈를 시작하세요.</div>
+  <div id="notice" style="color:gray;"></div>
+  <div id="answer" style="display:none; color:blue;"></div>
+  <button id="startBtn" onclick="startQuiz()">시작</button>
+  <button id="stopBtn" onclick="stopQuiz()" style="display:none;">종료</button>
+
+  <script>
+    let data = [];
+    let quizActive = false;
+
+    fetch("youth_quiz_data.json")
+      .then(response => response.json())
+      .then(json => {
+        data = json;
+      });
+
+    function speak(text, callback) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      if (callback) {
+        utterance.onend = callback;
+      }
+      speechSynthesis.speak(utterance);
+    }
+
+    function startQuiz() {
+      quizActive = true;
+      document.getElementById("startBtn").style.display = "none";
+      document.getElementById("stopBtn").style.display = "inline-block";
+      startQuizLoop();
+    }
+
+    function stopQuiz() {
+      quizActive = false;
+      document.getElementById("question").innerText = "퀴즈가 종료되었습니다.";
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("notice").innerText = "";
+      document.getElementById("startBtn").style.display = "inline-block";
+      document.getElementById("stopBtn").style.display = "none";
+    }
+
+    function startQuizLoop() {
+      if (!quizActive) return;
+      loadRandomQA();
+    }
+
+    function loadRandomQA() {
+      if (!quizActive) return;
+
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("answer").innerText = "";
+      document.getElementById("notice").innerText = "";
+
+      const qa = data[Math.floor(Math.random() * data.length)];
+      const questionText = "문제입니다: " + qa.question;
+
+      document.getElementById("question").innerText = questionText;
+      speak(questionText);
+
+      setTimeout(() => {
+        document.getElementById("notice").innerText = "20초 후에 정답이 나옵니다.";
+      }, 1000);
+
+      setTimeout(() => {
+        const answerText = "정답입니다: " + qa.answer;
+        document.getElementById("answer").innerText = answerText;
+        document.getElementById("answer").style.display = "block";
+        document.getElementById("notice").innerText = "";
+        speak(answerText, () => {
+          setTimeout(() => {
+            if (quizActive) loadRandomQA();
+          }, 1000);
+        });
+      }, 21000);
+    }
+  </script>
+</body>
+</html>
