@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>청소년지도사 면접퀴즈 (제작:김천대학교 상담심리학과 최준일교수)</title>
+  <title>청소년지도사 면접 퀴즈 (제작:김천대학교 상담심리학과 최준일 교수)</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,9 +10,20 @@
       background-color: #f0f0f0;
       text-align: center;
     }
-    #question, #answer, #notice {
+    #question {
       font-size: 1.5em;
       margin: 1em 0;
+      color: red;
+    }
+    #answer, #notice {
+      font-size: 1.5em;
+      margin: 1em 0;
+    }
+    #answer {
+      color: blue;
+    }
+    #notice {
+      color: gray;
     }
     button {
       font-size: 1em;
@@ -22,10 +33,10 @@
   </style>
 </head>
 <body>
-  <h1>청소년지도사 퀴즈</h1>
+  <h1>청소년지도사 면접 퀴즈 (제작:김천대학교 상담심리학과 최준일 교수)</h1>
   <div id="question">아래 시작 버튼을 눌러 퀴즈를 시작하세요.</div>
-  <div id="notice" style="color:gray;"></div>
-  <div id="answer" style="display:none; color:blue;"></div>
+  <div id="notice"></div>
+  <div id="answer" style="display:none;"></div>
   <button id="startBtn" onclick="startQuiz()">시작</button>
   <button id="stopBtn" onclick="stopQuiz()" style="display:none;">종료</button>
   <p style="color:gray; font-size: 0.9em;">※ 음성이 나오지 않으면 브라우저 외부(Chrome 등)에서 열어보세요.</p>
@@ -71,7 +82,7 @@
       document.getElementById("notice").innerText = "";
 
       const qa = data[Math.floor(Math.random() * data.length)];
-      const questionText = "문제 : " + qa.question;
+      const questionText = "문제입니다: " + qa.question;
 
       document.getElementById("question").innerText = questionText;
 
@@ -91,7 +102,7 @@
       }, 1000);
 
       setTimeout(() => {
-        const answerText = "정답 : " + qa.answer;
+        const answerText = "정답입니다: " + qa.answer;
         document.getElementById("answer").innerText = answerText;
         document.getElementById("answer").style.display = "block";
         document.getElementById("notice").innerText = "";
