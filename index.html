@@ -135,7 +135,7 @@
         document.getElementById("question").innerText = questionText;
         speak(questionText, () => {
           document.getElementById("notice").innerText = "20초 후에 정답이 나옵니다.";
-          setTimeout(() => showAnswer(currentQA), 30000);
+          setTimeout(() => showAnswer(currentQA), 40000);
         });
       } else if (repeatList.length > 0) {
         data = repeatList;
