@@ -71,7 +71,7 @@
       document.getElementById("notice").innerText = "";
 
       const qa = data[Math.floor(Math.random() * data.length)];
-      const questionText = "문제: " + qa.question;
+      const questionText = "문제 : " + qa.question;
 
       document.getElementById("question").innerText = questionText;
 
@@ -91,7 +91,7 @@
       }, 1000);
 
       setTimeout(() => {
-        const answerText = "정답: " + qa.answer;
+        const answerText = "정답 : " + qa.answer;
         document.getElementById("answer").innerText = answerText;
         document.getElementById("answer").style.display = "block";
         document.getElementById("notice").innerText = "";
