@@ -77,7 +77,7 @@
     let repeatList = JSON.parse(localStorage.getItem("repeatList") || "[]");
     let acquiredList = JSON.parse(localStorage.getItem("acquiredList") || "[]");
     let currentQA = null;
-    let autoRepeatTimeout = null;
+    let autoRepeatTimeout;
 
     fetch("youth_quiz_data.json")
       .then(response => response.json())
@@ -107,23 +107,23 @@
 
     function stopQuiz() {
       quizActive = false;
+      clearTimeout(autoRepeatTimeout);
       document.getElementById("question").innerText = "퀴즈가 종료되었습니다.";
       document.getElementById("answer").style.display = "none";
       document.getElementById("notice").innerText = "";
       document.getElementById("startBtn").style.display = "inline-block";
       document.getElementById("stopBtn").style.display = "none";
       document.getElementById("buttons").style.display = "none";
-      clearTimeout(autoRepeatTimeout);
     }
 
     function loadNextQA() {
       if (!quizActive) return;
 
+      clearTimeout(autoRepeatTimeout);
       document.getElementById("answer").style.display = "none";
       document.getElementById("answer").innerText = "";
       document.getElementById("notice").innerText = "";
       document.getElementById("buttons").style.display = "none";
-      clearTimeout(autoRepeatTimeout);
 
       while (currentIndex < data.length && isAcquired(data[currentIndex])) {
         currentIndex++;
@@ -135,7 +135,7 @@
         document.getElementById("question").innerText = questionText;
         speak(questionText, () => {
           document.getElementById("notice").innerText = "20초 후에 정답이 나옵니다.";
-          setTimeout(() => showAnswer(currentQA), 50000);
+          setTimeout(() => showAnswer(currentQA), 20000);
         });
       } else if (repeatList.length > 0) {
         data = repeatList;
@@ -154,11 +154,11 @@
       document.getElementById("answer").style.display = "block";
       document.getElementById("notice").innerText = "";
       document.getElementById("buttons").style.display = "block";
-      speak(answerText);
-
-      autoRepeatTimeout = setTimeout(() => {
-        repeatQuestion();
-      }, 20000);
+      speak(answerText, () => {
+        autoRepeatTimeout = setTimeout(() => {
+          repeatQuestion();
+        }, 30000);
+      });
     }
 
     function repeatQuestion() {
