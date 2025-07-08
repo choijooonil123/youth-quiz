@@ -23,20 +23,20 @@
 </head>
 <body>
   <h1>청소년지도사 퀴즈</h1>
-  <div id="question">문제를 불러오는 중...</div>
+  <div id="question">아래 시작 버튼을 눌러 퀴즈를 시작하세요.</div>
   <div id="notice" style="color:gray;"></div>
   <div id="answer" style="display:none; color:blue;"></div>
-  <button onclick="stopQuiz()">종료</button>
+  <button id="startBtn" onclick="startQuiz()">시작</button>
+  <button id="stopBtn" onclick="stopQuiz()" style="display:none;">종료</button>
 
   <script>
     let data = [];
-    let quizActive = true;
+    let quizActive = false;
 
     fetch("youth_quiz_data.json")
       .then(response => response.json())
       .then(json => {
         data = json;
-        startQuizLoop();
       });
 
     function speak(text, callback) {
@@ -48,8 +48,11 @@
       speechSynthesis.speak(utterance);
     }
 
-    function startQuizLoop() {
-      loadRandomQA();
+    function startQuiz() {
+      quizActive = true;
+      document.getElementById("startBtn").style.display = "none";
+      document.getElementById("stopBtn").style.display = "inline-block";
+      startQuizLoop();
     }
 
     function stopQuiz() {
@@ -57,6 +60,13 @@
       document.getElementById("question").innerText = "퀴즈가 종료되었습니다.";
       document.getElementById("answer").style.display = "none";
       document.getElementById("notice").innerText = "";
+      document.getElementById("startBtn").style.display = "inline-block";
+      document.getElementById("stopBtn").style.display = "none";
+    }
+
+    function startQuizLoop() {
+      if (!quizActive) return;
+      loadRandomQA();
     }
 
     function loadRandomQA() {
@@ -80,6 +90,7 @@
         const answerText = "정답입니다: " + qa.answer;
         document.getElementById("answer").innerText = answerText;
         document.getElementById("answer").style.display = "block";
+        document.getElementById("notice").innerText = "";
         speak(answerText, () => {
           setTimeout(() => {
             if (quizActive) loadRandomQA();
