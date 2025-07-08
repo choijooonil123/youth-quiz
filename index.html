@@ -15,7 +15,7 @@
       margin-bottom: 0.2em;
     }
     h2 {
-      font-size: 1em;
+      font-size: 0.9em;
       margin-top: 0;
       color: gray;
     }
@@ -74,8 +74,8 @@
     let data = [];
     let quizActive = false;
     let currentIndex = 0;
-    let repeatList = [];
-    let acquiredList = [];
+    let repeatList = JSON.parse(localStorage.getItem("repeatList") || "[]");
+    let acquiredList = JSON.parse(localStorage.getItem("acquiredList") || "[]");
     let currentQA = null;
 
     fetch("youth_quiz_data.json")
@@ -99,8 +99,6 @@
     function startQuiz() {
       quizActive = true;
       currentIndex = 0;
-      repeatList = [];
-      acquiredList = [];
       document.getElementById("startBtn").style.display = "none";
       document.getElementById("stopBtn").style.display = "inline-block";
       loadNextQA();
@@ -123,6 +121,11 @@
       document.getElementById("answer").innerText = "";
       document.getElementById("notice").innerText = "";
       document.getElementById("buttons").style.display = "none";
+
+      // skip acquired
+      while (currentIndex < data.length && isAcquired(data[currentIndex])) {
+        currentIndex++;
+      }
 
       if (currentIndex < data.length) {
         currentQA = data[currentIndex];
@@ -156,6 +159,7 @@
       if (currentQA) {
         repeatList.push(currentQA);
         currentIndex++;
+        saveProgress();
         updateStats();
         loadNextQA();
       }
@@ -165,9 +169,19 @@
       if (currentQA) {
         acquiredList.push(currentQA);
         currentIndex++;
+        saveProgress();
         updateStats();
         loadNextQA();
       }
+    }
+
+    function isAcquired(qa) {
+      return acquiredList.some(item => item.question === qa.question);
+    }
+
+    function saveProgress() {
+      localStorage.setItem("repeatList", JSON.stringify(repeatList));
+      localStorage.setItem("acquiredList", JSON.stringify(acquiredList));
     }
   </script>
 </body>
