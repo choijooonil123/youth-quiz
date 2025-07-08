@@ -28,6 +28,7 @@
   <div id="answer" style="display:none; color:blue;"></div>
   <button id="startBtn" onclick="startQuiz()">시작</button>
   <button id="stopBtn" onclick="stopQuiz()" style="display:none;">종료</button>
+  <p style="color:gray; font-size: 0.9em;">※ 음성이 나오지 않으면 브라우저 외부(Chrome 등)에서 열어보세요.</p>
 
   <script>
     let data = [];
@@ -42,9 +43,7 @@
     function speak(text, callback) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ko-KR';
-      if (callback) {
-        utterance.onend = callback;
-      }
+      if (callback) utterance.onend = callback;
       speechSynthesis.speak(utterance);
     }
 
@@ -52,7 +51,7 @@
       quizActive = true;
       document.getElementById("startBtn").style.display = "none";
       document.getElementById("stopBtn").style.display = "inline-block";
-      startQuizLoop();
+      loadRandomQA(true);
     }
 
     function stopQuiz() {
@@ -64,12 +63,7 @@
       document.getElementById("stopBtn").style.display = "none";
     }
 
-    function startQuizLoop() {
-      if (!quizActive) return;
-      loadRandomQA();
-    }
-
-    function loadRandomQA() {
+    function loadRandomQA(isFirst = false) {
       if (!quizActive) return;
 
       document.getElementById("answer").style.display = "none";
@@ -80,8 +74,18 @@
       const questionText = "문제입니다: " + qa.question;
 
       document.getElementById("question").innerText = questionText;
-      speak(questionText);
 
+      if (isFirst) {
+        speak(questionText, () => {
+          scheduleAnswer(qa);
+        });
+      } else {
+        speak(questionText);
+        scheduleAnswer(qa);
+      }
+    }
+
+    function scheduleAnswer(qa) {
       setTimeout(() => {
         document.getElementById("notice").innerText = "20초 후에 정답이 나옵니다.";
       }, 1000);
